@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Random Stock Image</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #121831;
+      --text: #e6e9f3;
+      --muted: #9aa3b2;
+      --accent: #6aa6ff;
+      --accent-2: #7ef0c3;
+      --ring: #2a7fff55;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: radial-gradient(1100px 700px at 10% -10%, #0f1740 0%, var(--bg) 55%),
+                  radial-gradient(800px 500px at 110% 120%, #042d2a 0%, transparent 55%);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+    }
+
+    .wrap {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+    }
+
+    .card {
+      width: min(680px, 92vw);
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+      backdrop-filter: blur(6px);
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      padding: 2rem clamp(1.25rem, 4vw, 2.25rem);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 0.5rem;
+      font-size: clamp(1.5rem, 1.2rem + 2vw, 2.5rem);
+    }
+
+    p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .btn {
+      margin-top: 1.5rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #071025;
+      font-weight: bold;
+      border: none;
+      border-radius: 16px;
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.2s ease;
+      box-shadow: 0 12px 30px rgba(64,141,255,0.35);
+      font-size: 1.1rem;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); box-shadow: 0 6px 18px rgba(64,141,255,0.28); }
+
+    .hint {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .kbd {
+      display: inline-block;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-bottom-width: 2px;
+      border-radius: 6px;
+      padding: 0.08rem 0.35rem;
+      font-family: monospace;
+      font-size: 0.8rem;
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card" role="region" aria-labelledby="title">
+      <h1 id="title">Random Stock Image Redirector</h1>
+      <p>Click the button to jump straight to a high‑quality random image from our GitHub list.</p>
+
+      <div class="controls">
+        <button class="btn" id="go" aria-label="Go to random stock image">🎲 Take me to a random image</button>
+      </div>
+
+      <p class="hint">Tip: Press <span class="kbd">Enter</span> to go again.</p>
+    </section>
+  </main>
+
+  <script>
+    const GITHUB_FILE_URL = "https://media.githubusercontent.com/media/inyourface34456/random-stock-image/refs/heads/main/urls.txt";
+
+    let imageLinks = [];
+
+    async function fetchLinks() {
+      try {
+        const res = await fetch(GITHUB_FILE_URL);
+        const text = await res.text();
+        imageLinks = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      } catch (err) {
+        console.error("Failed to fetch links:", err);
+      }
+    }
+
+    function getRandomLink() {
+      if (!imageLinks.length) return null;
+      const index = Math.floor(Math.random() * imageLinks.length);
+      return imageLinks[index];
+    }
+
+    function goNow() {
+      const url = getRandomLink();
+      if (url) {
+        window.open(url, "_blank");
+      } else {
+        console.warn("No links available");
+      }
+    }
+
+    document.getElementById("go").addEventListener("click", goNow);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.isComposing) {
+        goNow();
+      }
+    });
+
+    fetchLinks();
+  </script>
+</body>
+</html>
