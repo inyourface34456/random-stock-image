@@ -96,10 +96,10 @@
   <main class="wrap">
     <section class="card" role="region" aria-labelledby="title">
       <h1 id="title">Random Stock Image Redirector</h1>
-      <p>Click the button to jump straight to a high-quality random image from our GitHub list.</p>
+      <p>Click the button to jump straight to a high-quality random image from our GitHub list of over <span id="numLinks">???</span> diffrent images.</p>
 
       <div class="controls">
-        <button class="btn" id="go" aria-label="Go to random stock image" disabled>🎲 Take me to a random image</button>
+        <button class="btn" id="go" aria-label="Go to random stock image" disabled>Take me to a random image</button>
       </div>
 
       <p class="hint">Tip: Press <span class="kbd">Enter</span> to go again.</p>
@@ -125,6 +125,7 @@
           const text = new TextDecoder("utf-8").decode(data);
           imageLinks = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
           document.getElementById("go").disabled = false;
+          document.getElementById("numLinks").textContent = imageLinks.length;
         });
       } catch (err) {
         console.error("Failed to fetch links:", err);
