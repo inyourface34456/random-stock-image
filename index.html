@@ -61,12 +61,17 @@
       border-radius: 16px;
       padding: 1rem 1.5rem;
       cursor: pointer;
-      transition: transform 0.08s ease, box-shadow 0.2s ease;
+      transition: transform 0.08s ease, box-shadow 0.2s ease, opacity 0.2s ease;
       box-shadow: 0 12px 30px rgba(64,141,255,0.35);
       font-size: 1.1rem;
     }
-    .btn:hover { transform: translateY(-2px); }
-    .btn:active { transform: translateY(0); box-shadow: 0 6px 18px rgba(64,141,255,0.28); }
+    .btn:hover:not([disabled]) { transform: translateY(-2px); }
+    .btn:active:not([disabled]) { transform: translateY(0); box-shadow: 0 6px 18px rgba(64,141,255,0.28); }
+    .btn[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
 
     .hint {
       margin-top: 1rem;
@@ -91,26 +96,36 @@
   <main class="wrap">
     <section class="card" role="region" aria-labelledby="title">
       <h1 id="title">Random Stock Image Redirector</h1>
-      <p>Click the button to jump straight to a high‑quality random image from our GitHub list.</p>
+      <p>Click the button to jump straight to a high-quality random image from our GitHub list.</p>
 
       <div class="controls">
-        <button class="btn" id="go" aria-label="Go to random stock image">🎲 Take me to a random image</button>
+        <button class="btn" id="go" aria-label="Go to random stock image" disabled>🎲 Take me to a random image</button>
       </div>
 
       <p class="hint">Tip: Press <span class="kbd">Enter</span> to go again.</p>
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/fflate/umd/index.js"></script>
   <script>
-    const GITHUB_FILE_URL = "https://media.githubusercontent.com/media/inyourface34456/random-stock-image/refs/heads/main/urls.txt";
+    const GITHUB_FILE_URL = "https://raw.githubusercontent.com/inyourface34456/random-stock-image/refs/heads/main/urls.txt.gz"; // gzipped file
 
     let imageLinks = [];
 
     async function fetchLinks() {
       try {
         const res = await fetch(GITHUB_FILE_URL);
-        const text = await res.text();
-        imageLinks = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        const buffer = new Uint8Array(await res.arrayBuffer());
+
+        fflate.gunzip(buffer, (err, data) => {
+          if (err) {
+            console.error("Decompression error:", err);
+            return;
+          }
+          const text = new TextDecoder("utf-8").decode(data);
+          imageLinks = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+          document.getElementById("go").disabled = false;
+        });
       } catch (err) {
         console.error("Failed to fetch links:", err);
       }
