@@ -3,6 +3,9 @@
 *.iml filter=lfs diff=lfs merge=lfs -text
 *.py filter=lfs diff=lfs merge=lfs -text
 *.txt filter=lfs diff=lfs merge=lfs -text
+<<<<<<< HEAD
 urls.txt.gz filter=lfs diff=lfs merge=lfs -text
 *.gz filter=lfs diff=lfs merge=lfs -text
+=======
+>>>>>>> cbba762c771d12d2a9bdb57ba146cbb7f0a04fc4
 *.bak filter=lfs diff=lfs merge=lfs -text
